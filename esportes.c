@@ -211,6 +211,25 @@ TEsporte *insereEsporte(TEsporte **lista, const char *nome) {
     return novo;
 }
 
+/* tira o esporte da lista e libera a árvore de atletas dele */
+int removeEsporte(TEsporte **lista, const char *nome) {
+    TEsporte *ant = NULL;
+    TEsporte *atual = *lista;
+    while (atual != NULL && strcmp(atual->nome, nome) < 0) {
+        ant = atual;
+        atual = atual->prox;
+    }
+    if (atual == NULL || strcmp(atual->nome, nome) != 0)
+        return 0;
+    if (ant == NULL)
+        *lista = atual->prox;
+    else
+        ant->prox = atual->prox;
+    liberaAtletas(atual->atletas);
+    free(atual);
+    return 1;
+}
+
 void exibeEsportes(TEsporte *lista) {
     if (lista == NULL) {
         printf("Nenhum esporte cadastrado\n");
@@ -359,10 +378,20 @@ void opRemoveAtleta(TEsporte **lista) {
     }
 }
 
+void opRemoveEsporte(TEsporte **lista) {
+    char nome[MAX_NOME];
+    leNome("Nome do esporte: ", nome);
+    if (removeEsporte(lista, nome))
+        printf("Esporte %s removido com todos os seus atletas\n", nome);
+    else
+        printf("Esporte %s nao existe\n", nome);
+}
+
 void mostraMenu(void) {
     printf("\n1 - Inserir esporte\n");
     printf("2 - Inserir atleta em um esporte\n");
     printf("3 - Consultar esporte\n");
+    printf("4 - Remover esporte\n");
     printf("5 - Remover atleta de um esporte\n");
     printf("9 - Exibir atletas de um esporte\n");
     printf("11 - Exibir esportes\n");
@@ -385,6 +414,9 @@ int main(void) {
             break;
         case 3:
             opConsultaEsporte(&lista);
+            break;
+        case 4:
+            opRemoveEsporte(&lista);
             break;
         case 5:
             opRemoveAtleta(&lista);
