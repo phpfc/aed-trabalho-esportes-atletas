@@ -257,6 +257,57 @@ void liberaTudo(TEsporte *lista) {
     }
 }
 
+/* ---------- carga inicial ---------- */
+
+#define TEXTO_INICIAL \
+    "o tempo passa o tempo voa e o mundo gira sem parar porque o mundo precisa " \
+    "girar para a vida acontecer e a vida passa muito rapido se voce nao " \
+    "aproveitar cada momento da vida por isso viva intensamente cada dia e " \
+    "repita sempre que a vida e bela e cheia de surpresas boas que chegam para " \
+    "mudar tudo de lugar e trazer muita felicidade verdadeira sempre todos os dias"
+
+#define ESPORTES_INICIAIS 5
+
+/*
+ * Cria os esportes do exemplo do enunciado e usa cada palavra do texto como
+ * nome de atleta, distribuindo as palavras em rodízio: a primeira vai para o
+ * primeiro esporte, a segunda para o segundo, e assim por diante. Palavra
+ * repetida dentro do mesmo esporte não é inserida de novo.
+ */
+void inicializa(TEsporte **lista) {
+    const char *nomes[ESPORTES_INICIAIS] = {"atletismo", "basquete", "ginastica", "iatismo", "voleibol"};
+    TEsporte *esportes[ESPORTES_INICIAIS];
+    for (int i = 0; i < ESPORTES_INICIAIS; i++)
+        esportes[i] = insereEsporte(lista, nomes[i]);
+
+    const char *texto = TEXTO_INICIAL;
+    char palavra[MAX_NOME];
+    int palavras = 0;
+    int repetidas = 0;
+    int i = 0;
+    while (texto[i] != '\0') {
+        while (texto[i] == ' ')
+            i++;
+        int n = 0;
+        while (texto[i] != '\0' && texto[i] != ' ' && n < MAX_NOME - 1)
+            palavra[n++] = texto[i++];
+        palavra[n] = '\0';
+        if (n == 0)
+            break;
+
+        TEsporte *e = esportes[palavras % ESPORTES_INICIAIS];
+        int inseriu;
+        e->atletas = insereAtleta(e->atletas, palavra, &inseriu);
+        if (inseriu)
+            e->total++;
+        else
+            repetidas++;
+        palavras++;
+    }
+    printf("Carga inicial: %d palavras lidas, %d inseridas, %d repetidas no mesmo esporte\n",
+           palavras, palavras - repetidas, repetidas);
+}
+
 /* ---------- leitura ---------- */
 
 void leLinha(char *destino, int tamanho) {
@@ -501,6 +552,8 @@ void mostraMenu(void) {
 
 int main(void) {
     TEsporte *lista = NULL;
+    inicializa(&lista);
+    exibeEsportes(lista);
 
     int opcao;
     do {
