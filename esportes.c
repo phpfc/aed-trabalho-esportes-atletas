@@ -30,6 +30,91 @@ typedef struct esporte {
 
 /* ---------- AVL de atletas ---------- */
 
+TAtleta *criaAtleta(const char *nome) {
+    TAtleta *novo = malloc(sizeof(TAtleta));
+    if (novo == NULL) {
+        fprintf(stderr, "Erro de alocacao\n");
+        exit(1);
+    }
+    strcpy(novo->nome, nome);
+    novo->altura = 1;
+    novo->esq = NULL;
+    novo->dir = NULL;
+    return novo;
+}
+
+int altura(TAtleta *a) {
+    if (a == NULL)
+        return 0;
+    return a->altura;
+}
+
+void atualizaAltura(TAtleta *a) {
+    int he = altura(a->esq);
+    int hd = altura(a->dir);
+    a->altura = (he > hd ? he : hd) + 1;
+}
+
+/* fator de balanceamento: altura da esquerda menos altura da direita */
+int fator(TAtleta *a) {
+    if (a == NULL)
+        return 0;
+    return altura(a->esq) - altura(a->dir);
+}
+
+TAtleta *rotacaoDireita(TAtleta *a) {
+    TAtleta *b = a->esq;
+    a->esq = b->dir;
+    b->dir = a;
+    atualizaAltura(a);
+    atualizaAltura(b);
+    return b;
+}
+
+TAtleta *rotacaoEsquerda(TAtleta *a) {
+    TAtleta *b = a->dir;
+    a->dir = b->esq;
+    b->esq = a;
+    atualizaAltura(a);
+    atualizaAltura(b);
+    return b;
+}
+
+/* as rotações duplas são feitas com duas rotações simples */
+TAtleta *balanceia(TAtleta *a) {
+    atualizaAltura(a);
+    int fb = fator(a);
+    if (fb > 1) {
+        if (fator(a->esq) < 0)
+            a->esq = rotacaoEsquerda(a->esq);
+        return rotacaoDireita(a);
+    }
+    if (fb < -1) {
+        if (fator(a->dir) > 0)
+            a->dir = rotacaoDireita(a->dir);
+        return rotacaoEsquerda(a);
+    }
+    return a;
+}
+
+/* inseriu volta com 0 se o nome já estava na árvore */
+TAtleta *insereAtleta(TAtleta *a, const char *nome, int *inseriu) {
+    if (a == NULL) {
+        *inseriu = 1;
+        return criaAtleta(nome);
+    }
+    int cmp = strcmp(nome, a->nome);
+    if (cmp < 0)
+        a->esq = insereAtleta(a->esq, nome, inseriu);
+    else if (cmp > 0)
+        a->dir = insereAtleta(a->dir, nome, inseriu);
+    else {
+        *inseriu = 0;
+        return a;
+    }
+    return balanceia(a);
+}
+
 void liberaAtletas(TAtleta *a) {
     if (a != NULL) {
         liberaAtletas(a->esq);
