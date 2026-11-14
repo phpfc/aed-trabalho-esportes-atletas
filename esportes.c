@@ -305,9 +305,16 @@ void opExibeAtletasEsporte(TEsporte **lista) {
         exibeZA(e->atletas);
 }
 
+void opConsultaEsporte(TEsporte **lista) {
+    TEsporte *e = escolheEsporte(*lista);
+    if (e != NULL)
+        printf("Esporte %s: %d atleta(s), arvore com altura %d\n", e->nome, e->total, altura(e->atletas));
+}
+
 void mostraMenu(void) {
     printf("\n1 - Inserir esporte\n");
     printf("2 - Inserir atleta em um esporte\n");
+    printf("3 - Consultar esporte\n");
     printf("9 - Exibir atletas de um esporte\n");
     printf("11 - Exibir esportes\n");
     printf("0 - Sair\n");
@@ -326,6 +333,9 @@ int main(void) {
             break;
         case 2:
             opInsereAtleta(&lista);
+            break;
+        case 3:
+            opConsultaEsporte(&lista);
             break;
         case 9:
             opExibeAtletasEsporte(&lista);
