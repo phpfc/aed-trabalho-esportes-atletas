@@ -5,6 +5,28 @@
  *
  * Os esportes ficam em uma lista encadeada em ordem alfabética, e cada
  * esporte aponta para a AVL com os nomes dos seus atletas.
+ *
+ * Declaração de uso de IA
+ *
+ * IA utilizada: Claude Code (Anthropic), modelo Claude Fable 5.
+ *
+ * Para que foi utilizada:
+ * - Leitura do enunciado e da descrição do trabalho e definição das
+ *   estruturas (lista encadeada ordenada de esportes, AVL de atletas).
+ * - Escrita do código de todas as operações: inserção e remoção na AVL com
+ *   as rotações, lista de esportes, totais, exibições e percurso prefixado.
+ * - Decisão de como usar o texto de inicialização: cada palavra vira um
+ *   atleta, distribuída em rodízio entre cinco esportes de exemplo.
+ * - Definição das operações extras (exibir esportes, buscar atleta em todos
+ *   os esportes, exibir a árvore com os fatores de balanceamento).
+ * - Testes de cada operação, compilando com -fsanitize=address,undefined.
+ *
+ * Principais prompts:
+ * - "Quero que desenvolva o trabalho 1 e 2 em repos separados, a serem
+ *   criados. Também commite ao longo do desenvolvimento." (junto com o
+ *   enunciado e a descrição do trabalho)
+ * - Confirmação de que o problema é o de esportes e atletas da descrição,
+ *   mesmo com o texto de inicialização sendo de palavras soltas.
  */
 
 #include <ctype.h>
