@@ -436,6 +436,36 @@ void opTotalOrdenado(TEsporte **lista) {
     free(vetor);
 }
 
+/* insere em destino todos os nomes da árvore origem */
+TAtleta *copiaAtletas(TAtleta *destino, TAtleta *origem) {
+    if (origem == NULL)
+        return destino;
+    int inseriu;
+    destino = insereAtleta(destino, origem->nome, &inseriu);
+    destino = copiaAtletas(destino, origem->esq);
+    return copiaAtletas(destino, origem->dir);
+}
+
+/*
+ * Junta os atletas de todos os esportes em uma AVL auxiliar, exibe na ordem
+ * pedida e libera a auxiliar. Um atleta que está em mais de um esporte
+ * aparece uma vez só.
+ */
+void opExibeAtletasTotal(TEsporte **lista) {
+    TAtleta *todos = NULL;
+    for (TEsporte *e = *lista; e != NULL; e = e->prox)
+        todos = copiaAtletas(todos, e->atletas);
+    if (todos == NULL) {
+        printf("Nenhum atleta cadastrado\n");
+        return;
+    }
+    if (leOrdem())
+        exibeAZ(todos);
+    else
+        exibeZA(todos);
+    liberaAtletas(todos);
+}
+
 void mostraMenu(void) {
     printf("\n1 - Inserir esporte\n");
     printf("2 - Inserir atleta em um esporte\n");
@@ -444,6 +474,7 @@ void mostraMenu(void) {
     printf("5 - Remover atleta de um esporte\n");
     printf("6 - Total de atletas\n");
     printf("7 - Total de atletas por esporte (ordem decrescente)\n");
+    printf("8 - Exibir todos os atletas\n");
     printf("9 - Exibir atletas de um esporte\n");
     printf("11 - Exibir esportes\n");
     printf("0 - Sair\n");
@@ -477,6 +508,9 @@ int main(void) {
             break;
         case 7:
             opTotalOrdenado(&lista);
+            break;
+        case 8:
+            opExibeAtletasTotal(&lista);
             break;
         case 9:
             opExibeAtletasEsporte(&lista);
