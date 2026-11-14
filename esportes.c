@@ -187,6 +187,17 @@ void exibePrefixado(TAtleta *a) {
     }
 }
 
+/* escreve a árvore deitada: a raiz fica na esquerda e a subárvore direita em cima */
+void exibeArvore(TAtleta *a, int nivel) {
+    if (a == NULL)
+        return;
+    exibeArvore(a->dir, nivel + 1);
+    for (int i = 0; i < nivel; i++)
+        printf("        ");
+    printf("%s (fb %d)\n", a->nome, fator(a));
+    exibeArvore(a->esq, nivel + 1);
+}
+
 void liberaAtletas(TAtleta *a) {
     if (a != NULL) {
         liberaAtletas(a->esq);
@@ -564,6 +575,17 @@ void opBuscaAtleta(TEsporte **lista) {
         printf("%s nao esta em nenhum esporte\n", nome);
 }
 
+void opExibeArvore(TEsporte **lista) {
+    TEsporte *e = escolheEsporte(*lista);
+    if (e == NULL)
+        return;
+    if (e->total == 0)
+        printf("%s nao tem atletas\n", e->nome);
+    else
+        printf("Altura: %d\n", altura(e->atletas));
+    exibeArvore(e->atletas, 0);
+}
+
 void mostraMenu(void) {
     printf("\n1 - Inserir esporte\n");
     printf("2 - Inserir atleta em um esporte\n");
@@ -575,8 +597,9 @@ void mostraMenu(void) {
     printf("8 - Exibir todos os atletas\n");
     printf("9 - Exibir atletas de um esporte\n");
     printf("10 - Percurso prefixado dos atletas de um esporte\n");
-    printf("11 - Exibir esportes\n");
+    printf("11 - Exibir esportes (extra)\n");
     printf("12 - Buscar atleta em todos os esportes (extra)\n");
+    printf("13 - Exibir a arvore de um esporte com os fatores de balanceamento (extra)\n");
     printf("0 - Sair\n");
 }
 
@@ -625,6 +648,9 @@ int main(void) {
             break;
         case 12:
             opBuscaAtleta(&lista);
+            break;
+        case 13:
+            opExibeArvore(&lista);
             break;
         case 0:
             break;
