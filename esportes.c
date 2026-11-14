@@ -165,6 +165,15 @@ void exibeZA(TAtleta *a) {
     }
 }
 
+/* percurso prefixado: raiz, esquerda, direita */
+void exibePrefixado(TAtleta *a) {
+    if (a != NULL) {
+        printf("%s\n", a->nome);
+        exibePrefixado(a->esq);
+        exibePrefixado(a->dir);
+    }
+}
+
 void liberaAtletas(TAtleta *a) {
     if (a != NULL) {
         liberaAtletas(a->esq);
@@ -466,6 +475,15 @@ void opExibeAtletasTotal(TEsporte **lista) {
     liberaAtletas(todos);
 }
 
+void opPrefixado(TEsporte **lista) {
+    TEsporte *e = escolheEsporte(*lista);
+    if (e == NULL)
+        return;
+    if (e->total == 0)
+        printf("%s nao tem atletas\n", e->nome);
+    exibePrefixado(e->atletas);
+}
+
 void mostraMenu(void) {
     printf("\n1 - Inserir esporte\n");
     printf("2 - Inserir atleta em um esporte\n");
@@ -476,6 +494,7 @@ void mostraMenu(void) {
     printf("7 - Total de atletas por esporte (ordem decrescente)\n");
     printf("8 - Exibir todos os atletas\n");
     printf("9 - Exibir atletas de um esporte\n");
+    printf("10 - Percurso prefixado dos atletas de um esporte\n");
     printf("11 - Exibir esportes\n");
     printf("0 - Sair\n");
 }
@@ -514,6 +533,9 @@ int main(void) {
             break;
         case 9:
             opExibeAtletasEsporte(&lista);
+            break;
+        case 10:
+            opPrefixado(&lista);
             break;
         case 11:
             exibeEsportes(lista);
