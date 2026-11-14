@@ -115,6 +115,19 @@ TAtleta *insereAtleta(TAtleta *a, const char *nome, int *inseriu) {
     return balanceia(a);
 }
 
+TAtleta *consultaAtleta(TAtleta *a, const char *nome) {
+    while (a != NULL) {
+        int cmp = strcmp(nome, a->nome);
+        if (cmp == 0)
+            return a;
+        if (cmp < 0)
+            a = a->esq;
+        else
+            a = a->dir;
+    }
+    return NULL;
+}
+
 TAtleta *menorAtleta(TAtleta *a) {
     while (a->esq != NULL)
         a = a->esq;
@@ -535,6 +548,22 @@ void opPrefixado(TEsporte **lista) {
     exibePrefixado(e->atletas);
 }
 
+/* ---------- operações extras ---------- */
+
+void opBuscaAtleta(TEsporte **lista) {
+    char nome[MAX_NOME];
+    leNome("Nome do atleta: ", nome);
+    int achou = 0;
+    for (TEsporte *e = *lista; e != NULL; e = e->prox) {
+        if (consultaAtleta(e->atletas, nome) != NULL) {
+            printf("%s esta em %s\n", nome, e->nome);
+            achou++;
+        }
+    }
+    if (achou == 0)
+        printf("%s nao esta em nenhum esporte\n", nome);
+}
+
 void mostraMenu(void) {
     printf("\n1 - Inserir esporte\n");
     printf("2 - Inserir atleta em um esporte\n");
@@ -547,6 +576,7 @@ void mostraMenu(void) {
     printf("9 - Exibir atletas de um esporte\n");
     printf("10 - Percurso prefixado dos atletas de um esporte\n");
     printf("11 - Exibir esportes\n");
+    printf("12 - Buscar atleta em todos os esportes (extra)\n");
     printf("0 - Sair\n");
 }
 
@@ -592,6 +622,9 @@ int main(void) {
             break;
         case 11:
             exibeEsportes(lista);
+            break;
+        case 12:
+            opBuscaAtleta(&lista);
             break;
         case 0:
             break;
