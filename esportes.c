@@ -398,6 +398,44 @@ void opTotalAtletas(TEsporte **lista) {
     printf("Total de atletas: %d\n", totalAtletas(*lista));
 }
 
+/*
+ * Copia os ponteiros dos esportes para um vetor auxiliar e ordena o vetor
+ * por inserção direta, do maior total para o menor. A lista não é alterada,
+ * e em caso de empate os esportes continuam em ordem alfabética.
+ */
+void opTotalOrdenado(TEsporte **lista) {
+    int n = 0;
+    for (TEsporte *e = *lista; e != NULL; e = e->prox)
+        n++;
+    if (n == 0) {
+        printf("Nenhum esporte cadastrado\n");
+        return;
+    }
+
+    TEsporte **vetor = malloc(n * sizeof(TEsporte *));
+    if (vetor == NULL) {
+        fprintf(stderr, "Erro de alocacao\n");
+        exit(1);
+    }
+    int i = 0;
+    for (TEsporte *e = *lista; e != NULL; e = e->prox)
+        vetor[i++] = e;
+
+    for (i = 1; i < n; i++) {
+        TEsporte *chave = vetor[i];
+        int j = i - 1;
+        while (j >= 0 && vetor[j]->total < chave->total) {
+            vetor[j + 1] = vetor[j];
+            j--;
+        }
+        vetor[j + 1] = chave;
+    }
+
+    for (i = 0; i < n; i++)
+        printf("%s: %d atleta(s)\n", vetor[i]->nome, vetor[i]->total);
+    free(vetor);
+}
+
 void mostraMenu(void) {
     printf("\n1 - Inserir esporte\n");
     printf("2 - Inserir atleta em um esporte\n");
@@ -405,6 +443,7 @@ void mostraMenu(void) {
     printf("4 - Remover esporte\n");
     printf("5 - Remover atleta de um esporte\n");
     printf("6 - Total de atletas\n");
+    printf("7 - Total de atletas por esporte (ordem decrescente)\n");
     printf("9 - Exibir atletas de um esporte\n");
     printf("11 - Exibir esportes\n");
     printf("0 - Sair\n");
@@ -435,6 +474,9 @@ int main(void) {
             break;
         case 6:
             opTotalAtletas(&lista);
+            break;
+        case 7:
+            opTotalOrdenado(&lista);
             break;
         case 9:
             opExibeAtletasEsporte(&lista);
