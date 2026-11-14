@@ -115,6 +115,24 @@ TAtleta *insereAtleta(TAtleta *a, const char *nome, int *inseriu) {
     return balanceia(a);
 }
 
+/* percurso em ordem: esquerda, raiz, direita */
+void exibeAZ(TAtleta *a) {
+    if (a != NULL) {
+        exibeAZ(a->esq);
+        printf("%s\n", a->nome);
+        exibeAZ(a->dir);
+    }
+}
+
+/* percurso em ordem invertido: direita, raiz, esquerda */
+void exibeZA(TAtleta *a) {
+    if (a != NULL) {
+        exibeZA(a->dir);
+        printf("%s\n", a->nome);
+        exibeZA(a->esq);
+    }
+}
+
 void liberaAtletas(TAtleta *a) {
     if (a != NULL) {
         liberaAtletas(a->esq);
@@ -234,8 +252,63 @@ void opInsereEsporte(TEsporte **lista) {
         printf("Esporte %s ja existe\n", nome);
 }
 
+TEsporte *escolheEsporte(TEsporte *lista) {
+    char nome[MAX_NOME];
+    leNome("Nome do esporte: ", nome);
+    TEsporte *e = buscaEsporte(lista, nome);
+    if (e == NULL)
+        printf("Esporte %s nao existe\n", nome);
+    return e;
+}
+
+/* retorna 1 para ordem de A a Z e 0 para ordem de Z a A */
+int leOrdem(void) {
+    while (1) {
+        int ordem = leInt("Ordem (1 = A a Z, 2 = Z a A): ");
+        if (ordem == 1 || ordem == 2)
+            return ordem == 1;
+        printf("Digite 1 ou 2\n");
+    }
+}
+
+void opInsereAtleta(TEsporte **lista) {
+    TEsporte *e = escolheEsporte(*lista);
+    if (e == NULL)
+        return;
+    char nome[MAX_NOME];
+    leNome("Nome do atleta: ", nome);
+    if (nome[0] == '\0') {
+        printf("Nome vazio\n");
+        return;
+    }
+    int inseriu;
+    e->atletas = insereAtleta(e->atletas, nome, &inseriu);
+    if (inseriu) {
+        e->total++;
+        printf("Atleta %s inserido em %s\n", nome, e->nome);
+    } else {
+        printf("Atleta %s ja esta em %s\n", nome, e->nome);
+    }
+}
+
+void opExibeAtletasEsporte(TEsporte **lista) {
+    TEsporte *e = escolheEsporte(*lista);
+    if (e == NULL)
+        return;
+    if (e->total == 0) {
+        printf("%s nao tem atletas\n", e->nome);
+        return;
+    }
+    if (leOrdem())
+        exibeAZ(e->atletas);
+    else
+        exibeZA(e->atletas);
+}
+
 void mostraMenu(void) {
     printf("\n1 - Inserir esporte\n");
+    printf("2 - Inserir atleta em um esporte\n");
+    printf("9 - Exibir atletas de um esporte\n");
     printf("11 - Exibir esportes\n");
     printf("0 - Sair\n");
 }
@@ -250,6 +323,12 @@ int main(void) {
         switch (opcao) {
         case 1:
             opInsereEsporte(&lista);
+            break;
+        case 2:
+            opInsereAtleta(&lista);
+            break;
+        case 9:
+            opExibeAtletasEsporte(&lista);
             break;
         case 11:
             exibeEsportes(lista);
