@@ -115,6 +115,38 @@ TAtleta *insereAtleta(TAtleta *a, const char *nome, int *inseriu) {
     return balanceia(a);
 }
 
+TAtleta *menorAtleta(TAtleta *a) {
+    while (a->esq != NULL)
+        a = a->esq;
+    return a;
+}
+
+/* nodo com dois filhos é substituído pelo menor da subárvore direita */
+TAtleta *removeAtleta(TAtleta *a, const char *nome, int *removeu) {
+    if (a == NULL) {
+        *removeu = 0;
+        return NULL;
+    }
+    int cmp = strcmp(nome, a->nome);
+    if (cmp < 0) {
+        a->esq = removeAtleta(a->esq, nome, removeu);
+    } else if (cmp > 0) {
+        a->dir = removeAtleta(a->dir, nome, removeu);
+    } else {
+        *removeu = 1;
+        if (a->esq == NULL || a->dir == NULL) {
+            TAtleta *filho = a->esq != NULL ? a->esq : a->dir;
+            free(a);
+            return filho;
+        }
+        TAtleta *sucessor = menorAtleta(a->dir);
+        strcpy(a->nome, sucessor->nome);
+        int aux;
+        a->dir = removeAtleta(a->dir, sucessor->nome, &aux);
+    }
+    return balanceia(a);
+}
+
 /* percurso em ordem: esquerda, raiz, direita */
 void exibeAZ(TAtleta *a) {
     if (a != NULL) {
@@ -311,10 +343,27 @@ void opConsultaEsporte(TEsporte **lista) {
         printf("Esporte %s: %d atleta(s), arvore com altura %d\n", e->nome, e->total, altura(e->atletas));
 }
 
+void opRemoveAtleta(TEsporte **lista) {
+    TEsporte *e = escolheEsporte(*lista);
+    if (e == NULL)
+        return;
+    char nome[MAX_NOME];
+    leNome("Nome do atleta: ", nome);
+    int removeu;
+    e->atletas = removeAtleta(e->atletas, nome, &removeu);
+    if (removeu) {
+        e->total--;
+        printf("Atleta %s removido de %s\n", nome, e->nome);
+    } else {
+        printf("Atleta %s nao esta em %s\n", nome, e->nome);
+    }
+}
+
 void mostraMenu(void) {
     printf("\n1 - Inserir esporte\n");
     printf("2 - Inserir atleta em um esporte\n");
     printf("3 - Consultar esporte\n");
+    printf("5 - Remover atleta de um esporte\n");
     printf("9 - Exibir atletas de um esporte\n");
     printf("11 - Exibir esportes\n");
     printf("0 - Sair\n");
@@ -336,6 +385,9 @@ int main(void) {
             break;
         case 3:
             opConsultaEsporte(&lista);
+            break;
+        case 5:
+            opRemoveAtleta(&lista);
             break;
         case 9:
             opExibeAtletasEsporte(&lista);
