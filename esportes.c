@@ -387,12 +387,24 @@ void opRemoveEsporte(TEsporte **lista) {
         printf("Esporte %s nao existe\n", nome);
 }
 
+int totalAtletas(TEsporte *lista) {
+    int total = 0;
+    for (TEsporte *e = lista; e != NULL; e = e->prox)
+        total += e->total;
+    return total;
+}
+
+void opTotalAtletas(TEsporte **lista) {
+    printf("Total de atletas: %d\n", totalAtletas(*lista));
+}
+
 void mostraMenu(void) {
     printf("\n1 - Inserir esporte\n");
     printf("2 - Inserir atleta em um esporte\n");
     printf("3 - Consultar esporte\n");
     printf("4 - Remover esporte\n");
     printf("5 - Remover atleta de um esporte\n");
+    printf("6 - Total de atletas\n");
     printf("9 - Exibir atletas de um esporte\n");
     printf("11 - Exibir esportes\n");
     printf("0 - Sair\n");
@@ -420,6 +432,9 @@ int main(void) {
             break;
         case 5:
             opRemoveAtleta(&lista);
+            break;
+        case 6:
+            opTotalAtletas(&lista);
             break;
         case 9:
             opExibeAtletasEsporte(&lista);
